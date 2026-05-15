@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Depo Timer</title>
+<style>
+  :root {
+    --punch-green: #1D9E75;
+    --punch-green-dark: #0F6E56;
+    --punch-green-bg: #E1F5EE;
+    --punch-red: #D85A30;
+    --punch-red-dark: #993C1D;
+    --punch-red-bg: #FAEBE7;
+    --punch-blue: #185FA5;
+    --punch-blue-bg: #E6F1FB;
+    --surface: #f5f5f3;
+    --card: #ffffff;
+    --muted: #888780;
+    --muted-soft: #B4B2A9;
+    --border: rgba(0, 0, 0, 0.12);
+    --edit-bg: #F1EFE8;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    background: #e9e9e3;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: clamp(12px, 4vw, 32px);
+  }
+
+  .app {
+    width: 100%;
+    max-width: 360px;
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Phone portrait: fill the viewport, drop the floating-card chrome */
+  @media (max-width: 480px) {
+    body {
+      padding: 0;
+      align-items: stretch;
+    }
+    .app {
+      max-width: none;
+      min-height: 100vh;
+      min-height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .entries {
+      max-height: none !important;
+    }
+  }
+
+  /* Larger viewports: allow the card to breathe a little */
+  @media (min-width: 768px) {
+    .app {
+      max-width: 380px;
+    }
+  }
+
+  .app-body {
+    padding: 14px 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+  }
+
+  /* Total card */
+  .total {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+  }
+  .total .label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .total .value {
+    margin-left: auto;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--punch-blue);
+    font-variant-numeric: tabular-nums;
+    font-family: -apple-system, "SF Pro Rounded", system-ui, sans-serif;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--punch-green);
+    animation: pulse 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
+  }
+
+  /* Log card */
+  .log {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .log-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .log-header .label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .log-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .icon-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: rgba(136, 135, 128, 0.8);
+    font-family: inherit;
+  }
+  .icon-btn:hover { color: var(--punch-blue); }
+  .icon-btn.confirmed { color: var(--punch-green); }
+  .icon-btn svg { width: 11px; height: 11px; fill: currentColor; }
+  .divider-pip {
+    width: 1px;
+    height: 12px;
+    background: var(--border);
+  }
+  .trash-btn { color: rgba(136, 135, 128, 0.6); }
+  .trash-btn:hover { color: var(--punch-red); }
+
+  /* Entries */
+  .entries {
+    max-height: min(240px, 45vh);
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted-soft);
+    font-size: 13px;
+    padding: 28px 0;
+  }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .entry:last-of-type { border-bottom: none; }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.in  { background: var(--punch-green); }
+  .dot.out { background: var(--punch-red); }
+  .time {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 2px 4px;
+    border-radius: 5px;
+    cursor: text;
+    user-select: none;
+  }
+  .time:hover { background: rgba(0,0,0,0.04); }
+  .time-edit {
+    font-size: 14px;
+    font-weight: 500;
+    width: 100px;
+    padding: 2px 6px;
+    background: var(--edit-bg);
+    border: 0.5px solid var(--border);
+    border-radius: 5px;
+    font-family: inherit;
+    outline: none;
+  }
+  .time-edit:focus { border-color: var(--punch-blue); }
+  .commit-btn, .cancel-btn {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .commit-btn svg { color: var(--punch-green); }
+  .cancel-btn svg { color: var(--punch-red); }
+  .commit-btn svg, .cancel-btn svg { width: 11px; height: 11px; fill: currentColor; }
+
+  .badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .badge.in  { background: var(--punch-green-bg); color: var(--punch-green-dark); }
+  .badge.out { background: var(--punch-red-bg);   color: var(--punch-red-dark); }
+
+  .duration-row {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+  }
+  .duration {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--punch-blue);
+    background: var(--punch-blue-bg);
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+
+  /* Footer / Punch button */
+  .footer {
+    margin-top: 8px;
+    padding: 12px 14px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: var(--surface);
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .punch-btn {
+    width: 100%;
+    min-height: 44px;
+    border: none;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+    font-family: inherit;
+  }
+  .punch-btn.in  { background: var(--punch-green); }
+  .punch-btn.out { background: var(--punch-red); }
+  .punch-btn:active { transform: scale(0.98); opacity: 0.85; }
+
+  /* Confirm modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
+    animation: fade-in 0.12s ease;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .modal {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 320px;
+    padding: 18px 18px 14px;
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .modal-body {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 14px;
+    line-height: 1.4;
+  }
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .modal-btn {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+    color: #1a1a1a;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .modal-btn:hover { background: #ececea; }
+  .modal-btn.primary {
+    background: var(--punch-blue);
+    border-color: var(--punch-blue);
+    color: #ffffff;
+  }
+  .modal-btn.primary:hover { background: #134a82; }
+  .modal-btn.cancel { color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-body">
+      <div id="total-card" class="card total" hidden>
+        <span class="label">
+          <span>Total time</span>
+          <span id="pulse-dot" class="pulse-dot" hidden></span>
+        </span>
+        <span id="total-value" class="value">0s</span>
+      </div>
+
+      <div class="card log">
+        <div class="log-header">
+          <span class="label">Log</span>
+          <div id="log-actions" class="log-actions" hidden>
+            <button id="copy-btn" class="icon-btn" title="Copy log">
+              <svg viewBox="0 0 16 16"><path d="M11 1H4a2 2 0 0 0-2 2v9h1V3a1 1 0 0 1 1-1h7V1zm2 2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm1 11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v9z"/></svg>
+              <span id="copy-label">Copy</span>
+            </button>
+            <button id="csv-btn" class="icon-btn" title="Download CSV">
+              <svg viewBox="0 0 16 16"><path d="M8 1a.5.5 0 0 1 .5.5v8.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V1.5A.5.5 0 0 1 8 1zM2 13.5A.5.5 0 0 1 2.5 13h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+              <span>CSV</span>
+            </button>
+            <span class="divider-pip"></span>
+            <button id="clear-btn" class="icon-btn trash-btn" title="Clear all entries">
+              <svg viewBox="0 0 16 16"><path d="M6.5 1a.5.5 0 0 0-.5.5V2H3.5a.5.5 0 0 0 0 1H4v10.5A1.5 1.5 0 0 0 5.5 15h5a1.5 1.5 0 0 0 1.5-1.5V3h.5a.5.5 0 0 0 0-1H10v-.5a.5.5 0 0 0-.5-.5h-3zM5 3h6v10.5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5V3zm2 2a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6A.5.5 0 0 1 7 5zm2 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6A.5.5 0 0 1 9 5z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="entries" class="entries">
+          <div class="empty">No entries yet</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button id="punch-btn" class="punch-btn in">Start / In</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const SAVE_KEY = "punchEntries";
+
+  // entries are stored newest-first, matching the Swift app
+  let entries = loadEntries();
+  let editingId = null;
+  let editText = "";
+  let copyConfirmedTimer = null;
+  let tickInterval = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function uuid() {
+    if (crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  function loadEntries() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return parsed.map(e => ({ id: e.id, type: e.type, time: new Date(e.time) }));
+    } catch { return []; }
+  }
+
+  function saveEntries() {
+    const serializable = entries.map(e => ({ id: e.id, type: e.type, time: e.time.toISOString() }));
+    localStorage.setItem(SAVE_KEY, JSON.stringify(serializable));
+  }
+
+  function isClockedIn() {
+    return entries.length > 0 && entries[0].type === "in";
+  }
+
+  // milliseconds of paired out→in sessions (excluding any open session)
+  function completedSeconds() {
+    let total = 0;
+    for (let i = 0; i < entries.length; i++) {
+      const e = entries[i];
+      if (e.type === "out" && i + 1 < entries.length && entries[i + 1].type === "in") {
+        total += (e.time.getTime() - entries[i + 1].time.getTime()) / 1000;
+      }
+    }
+    return total;
+  }
+
+  function totalSeconds() {
+    let t = completedSeconds();
+    if (isClockedIn()) {
+      t += (Date.now() - entries[0].time.getTime()) / 1000;
+    }
+    return t;
+  }
+
+  function sessionDurationString(outEntry, inEntry) {
+    const secs = Math.floor((outEntry.time.getTime() - inEntry.time.getTime()) / 1000);
+    return formatSeconds(secs);
+  }
+
+  function formatSeconds(totalSec) {
+    totalSec = Math.floor(totalSec);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  }
+
+  function formatTime(date) {
+    let h = date.getHours();
+    const m = String(date.getMinutes()).padStart(2, "0");
+    const s = String(date.getSeconds()).padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${h}:${m}:${s} ${ampm}`;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  // MARK: render
+
+  function render() {
+    const hasEntries = entries.length > 0;
+
+    // Total card
+    const totalCard = $("total-card");
+    if (hasEntries) {
+      totalCard.hidden = false;
+      $("total-value").textContent = formatSeconds(totalSeconds());
+      $("pulse-dot").hidden = !isClockedIn();
+    } else {
+      totalCard.hidden = true;
+    }
+
+    // Log actions
+    $("log-actions").hidden = !hasEntries;
+
+    // Entries list
+    const list = $("entries");
+    if (!hasEntries) {
+      list.innerHTML = `<div class="empty">No entries yet</div>`;
+    } else {
+      const parts = [];
+      for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
+        parts.push(entryRowHtml(e, i));
+        // Duration capsule appears between an out→in pair (out is newer, so just above an in in newest-first list)
+        if (e.type === "out" && i + 1 < entries.length && entries[i + 1].type === "in") {
+          const dur = sessionDurationString(e, entries[i + 1]);
+          parts.push(`<div class="duration-row"><span class="duration">${escapeHtml(dur)}</span></div>`);
+        }
+      }
+      list.innerHTML = parts.join("");
+      bindEntryHandlers();
+    }
+
+    // Punch button
+    const btn = $("punch-btn");
+    if (isClockedIn()) {
+      btn.textContent = "Stop / Out";
+      btn.classList.remove("in");
+      btn.classList.add("out");
+    } else {
+      btn.textContent = "Start / In";
+      btn.classList.remove("out");
+      btn.classList.add("in");
+    }
+
+    updateTitle();
+    manageTicker();
+  }
+
+  function entryRowHtml(entry, idx) {
+    const isIn = entry.type === "in";
+    const editing = entry.id === editingId;
+    let timeCell;
+    if (editing) {
+      timeCell = `
+        <input class="time-edit" type="text" value="${escapeHtml(editText)}" data-id="${entry.id}" placeholder="HH:MM:SS" />
+        <button class="commit-btn" data-action="commit" data-id="${entry.id}" title="Save">
+          <svg viewBox="0 0 16 16"><path d="M13.485 4.515a.75.75 0 0 1 0 1.06l-6.364 6.364a.75.75 0 0 1-1.06 0L2.515 8.394a.75.75 0 1 1 1.06-1.061l3.016 3.016 5.834-5.834a.75.75 0 0 1 1.06 0z"/></svg>
+        </button>
+        <button class="cancel-btn" data-action="cancel" data-id="${entry.id}" title="Cancel">
+          <svg viewBox="0 0 16 16"><path d="M4.293 4.293a1 1 0 0 1 1.414 0L8 6.586l2.293-2.293a1 1 0 1 1 1.414 1.414L9.414 8l2.293 2.293a1 1 0 0 1-1.414 1.414L8 9.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L6.586 8 4.293 5.707a1 1 0 0 1 0-1.414z"/></svg>
+        </button>
+      `;
+    } else {
+      timeCell = `<span class="time" data-action="edit" data-id="${entry.id}" title="Click to edit time">${escapeHtml(formatTime(entry.time))}</span>`;
+    }
+    return `
+      <div class="entry" data-idx="${idx}">
+        <span class="dot ${isIn ? "in" : "out"}"></span>
+        ${timeCell}
+        <span class="badge ${isIn ? "in" : "out"}">${isIn ? "In" : "Out"}</span>
+      </div>
+    `;
+  }
+
+  function bindEntryHandlers() {
+    document.querySelectorAll('[data-action="edit"]').forEach(el => {
+      el.addEventListener("click", () => startEdit(el.dataset.id));
+    });
+    document.querySelectorAll('[data-action="commit"]').forEach(el => {
+      el.addEventListener("click", () => commitEdit(el.dataset.id));
+    });
+    document.querySelectorAll('[data-action="cancel"]').forEach(el => {
+      el.addEventListener("click", () => cancelEdit());
+    });
+    const input = document.querySelector(".time-edit");
+    if (input) {
+      input.focus();
+      input.select();
+      input.addEventListener("input", e => { editText = e.target.value; });
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") commitEdit(input.dataset.id);
+        else if (e.key === "Escape") cancelEdit();
+      });
+    }
+  }
+
+  function startEdit(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+    const t = entry.time;
+    const pad = n => String(n).padStart(2, "0");
+    editText = `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+    editingId = id;
+    render();
+  }
+
+  function commitEdit(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) { cancelEdit(); return; }
+    const m = editText.match(/^\s*(\d{1,2}):(\d{2}):(\d{2})\s*$/);
+    if (m) {
+      const h = Math.min(23, parseInt(m[1], 10));
+      const mn = Math.min(59, parseInt(m[2], 10));
+      const sc = Math.min(59, parseInt(m[3], 10));
+      const newDate = new Date(entry.time);
+      newDate.setHours(h, mn, sc, 0);
+      entry.time = newDate;
+      saveEntries();
+    }
+    editingId = null;
+    editText = "";
+    render();
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    editText = "";
+    render();
+  }
+
+  // MARK: actions
+
+  function punch() {
+    const newType = isClockedIn() ? "out" : "in";
+    entries.unshift({ id: uuid(), type: newType, time: new Date() });
+    saveEntries();
+    render();
+  }
+
+  function clearAll() {
+    if (!confirm("Clear all entries?")) return;
+    entries = [];
+    saveEntries();
+    render();
+  }
+
+  // Export formats — match the Swift app exactly:
+  // - oldest-first
+  // - text: time + "(In/Out)" on each line; "  Duration: ..." line after the "Out" of each pair
+  // - CSV: header row, then rows oldest-first, duration on the "Out" row
+  function buildTextData() {
+    if (entries.length === 0) return "";
+    const lines = [];
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
+      lines.push(`${formatTime(e.time)}  (${e.type === "in" ? "In" : "Out"})`);
+      if (e.type === "out" && i + 1 < entries.length && entries[i + 1].type === "in") {
+        lines.push(`  Duration: ${sessionDurationString(e, entries[i + 1])}`);
+      }
+    }
+    lines.push("");
+    lines.push(`Total: ${formatSeconds(totalSeconds())}`);
+    return lines.join("\n");
+  }
+
+  function buildCSVData() {
+    const rows = [`"Type","Time","Duration"`];
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
+      let dur = "";
+      if (e.type === "out" && i + 1 < entries.length && entries[i + 1].type === "in") {
+        dur = sessionDurationString(e, entries[i + 1]);
+      }
+      rows.push(`"${e.type === "in" ? "In" : "Out"}","${formatTime(e.time)}","${dur}"`);
+    }
+    if (entries.length > 0) {
+      rows.push(`"Total","","${formatSeconds(completedSeconds())}"`);
+    }
+    return rows.join("\n");
+  }
+
+  // If the timer is running, ask the user whether to stop it, export as-is, or cancel.
+  // Returns true if the export should proceed.
+  function confirmExportIfRunning() {
+    if (!isClockedIn()) return Promise.resolve(true);
+    return new Promise(resolve => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "modal-backdrop";
+      backdrop.innerHTML = `
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <h2 class="modal-title" id="modal-title">Timer is still running</h2>
+          <p class="modal-body">Stop the timer before exporting, or export the log as-is?</p>
+          <div class="modal-actions">
+            <button class="modal-btn primary" data-choice="stop">Stop &amp; Export</button>
+            <button class="modal-btn" data-choice="asis">Export As-Is</button>
+            <button class="modal-btn cancel" data-choice="cancel">Cancel</button>
+          </div>
+        </div>
+      `;
+      const close = (choice) => {
+        document.removeEventListener("keydown", onKey);
+        backdrop.remove();
+        if (choice === "stop") { punch(); resolve(true); }
+        else if (choice === "asis") { resolve(true); }
+        else { resolve(false); }
+      };
+      const onKey = (e) => {
+        if (e.key === "Escape") close("cancel");
+      };
+      backdrop.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-choice]");
+        if (btn) { close(btn.dataset.choice); return; }
+        if (e.target === backdrop) close("cancel");
+      });
+      document.addEventListener("keydown", onKey);
+      document.body.appendChild(backdrop);
+      backdrop.querySelector(".modal-btn.primary").focus();
+    });
+  }
+
+  async function copyToClipboard() {
+    if (!(await confirmExportIfRunning())) return;
+    const text = buildTextData();
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Fallback for older browsers
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    const btn = $("copy-btn");
+    const label = $("copy-label");
+    btn.classList.add("confirmed");
+    label.textContent = "Copied";
+    clearTimeout(copyConfirmedTimer);
+    copyConfirmedTimer = setTimeout(() => {
+      btn.classList.remove("confirmed");
+      label.textContent = "Copy";
+    }, 2000);
+  }
+
+  async function downloadCSV() {
+    if (!(await confirmExportIfRunning())) return;
+    const blob = new Blob([buildCSVData()], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const today = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    a.href = url;
+    a.download = `time-log-${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // MARK: ticker
+
+  function manageTicker() {
+    if (isClockedIn() && !tickInterval) {
+      tickInterval = setInterval(() => {
+        $("total-value").textContent = formatSeconds(totalSeconds());
+        updateTitle();
+      }, 1000);
+    } else if (!isClockedIn() && tickInterval) {
+      clearInterval(tickInterval);
+      tickInterval = null;
+    }
+  }
+
+  function updateTitle() {
+    if (isClockedIn()) {
+      document.title = `● ${formatSeconds(totalSeconds())} — Depo Timer`;
+    } else if (entries.length > 0) {
+      document.title = `${formatSeconds(totalSeconds())} — Depo Timer`;
+    } else {
+      document.title = "Depo Timer";
+    }
+  }
+
+  // MARK: bindings
+
+  $("punch-btn").addEventListener("click", punch);
+  $("copy-btn").addEventListener("click", copyToClipboard);
+  $("csv-btn").addEventListener("click", downloadCSV);
+  $("clear-btn").addEventListener("click", clearAll);
+
+  render();
+})();
+</script>
+</body>
+</html>

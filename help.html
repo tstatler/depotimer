@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depo Timer — Help</title>
+<style>
+  :root {
+    --punch-green: #1D9E75;
+    --punch-red: #D85A30;
+    --punch-blue: #185FA5;
+    --punch-blue-bg: #E6F1FB;
+    --surface: #f5f5f3;
+    --card: #ffffff;
+    --muted: #888780;
+    --border: rgba(0, 0, 0, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    background: #e9e9e3;
+    color: #1a1a1a;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 40px);
+  }
+
+  main {
+    width: 100%;
+    max-width: 640px;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+    padding: clamp(20px, 4vw, 36px);
+  }
+
+  h1 {
+    font-size: clamp(22px, 4vw, 28px);
+    margin: 0 0 4px;
+    color: var(--punch-blue);
+  }
+  .tagline {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin: 28px 0 10px;
+    font-weight: 600;
+  }
+
+  p { margin: 0 0 12px; }
+
+  ol, ul {
+    margin: 0 0 12px;
+    padding-left: 22px;
+  }
+  li { margin-bottom: 6px; }
+
+  kbd {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 999px;
+    vertical-align: 1px;
+  }
+  .pill.in  { background: #E1F5EE; color: #0F6E56; }
+  .pill.out { background: #FAEBE7; color: #993C1D; }
+  .pill.dur { background: var(--punch-blue-bg); color: var(--punch-blue); }
+
+  .callout {
+    background: var(--surface);
+    border-left: 3px solid var(--punch-blue);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <main>
+    <h1>Depo Timer</h1>
+    <p class="tagline">A simple on-the-record timer for videographers covering Zoom depositions.</p>
+
+    <h2>What it's for</h2>
+    <p>
+      When you're recording a deposition on Zoom, you need a clean log of when the
+      recording was rolling — start, every break, and the final stop. Depo Timer
+      mirrors your Zoom record button so you end the day with an accurate
+      on-the-record total and a session-by-session breakdown you can hand off
+      with the video.
+    </p>
+
+    <h2>During the deposition</h2>
+    <ol>
+      <li>
+        When you hit <strong>Record</strong> in Zoom at the start of the depo,
+        tap the green <strong>Start / In</strong> button. The timer starts
+        counting and a pulsing green dot shows you're on the record.
+      </li>
+      <li>
+        When the noticing attorney calls a break (lunch, witness conference,
+        bathroom), pause Zoom's recording and tap the red <strong>Stop / Out</strong>
+        button at the same moment. The session length appears as a blue
+        <span class="pill dur">duration</span> capsule.
+      </li>
+      <li>
+        When you go back on the record, resume the Zoom recording and tap
+        <strong>Start / In</strong> again. Repeat for every break.
+      </li>
+      <li>
+        When the deposition concludes, stop the Zoom recording and tap
+        <strong>Stop / Out</strong> one last time.
+      </li>
+    </ol>
+
+    <h2>Fixing a missed tap</h2>
+    <p>
+      If you forgot to tap exactly when you started or stopped the recording,
+      click any time in the log to edit it. Type the correct time as
+      <kbd>HH:MM:SS</kbd> (24-hour) and press <kbd>Enter</kbd> to save, or
+      <kbd>Esc</kbd> to cancel. Only the time changes — the date stays the same.
+    </p>
+
+    <h2>Wrapping up the job</h2>
+    <p>After the depo is over, you can hand off your record two ways:</p>
+    <ul>
+      <li>
+        <strong>Copy</strong> — puts a readable text log on the clipboard, ready
+        to paste into a job-sheet, email, or invoice note.
+      </li>
+      <li>
+        <strong>CSV</strong> — downloads a spreadsheet file named
+        <kbd>time-log-YYYY-MM-DD.csv</kbd>, useful for billing systems or
+        archiving alongside the video files.
+      </li>
+    </ul>
+    <p>
+      Both exports list entries oldest-first, with each session's duration shown
+      on the <span class="pill out">Out</span> line that closes it, and a total
+      on-the-record time at the bottom.
+    </p>
+
+    <h2>Starting a new day</h2>
+    <p>
+      The trash icon clears every entry so you can start fresh for the next
+      deposition. There's no undo — export first if you still need the log.
+    </p>
+
+    <div class="callout">
+      <strong>Your data stays on your device.</strong> The web version saves to
+      your browser's local storage; the Mac menu bar version saves to your user
+      defaults. Nothing is uploaded.
+    </div>
+  </main>
+</body>
+</html>
