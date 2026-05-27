@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A0894AE02FB6CDDE009C1645 /* DepoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0894ADF2FB6CCD6009C1645 /* DepoCore.swift */; };
+		A041544A2FB7DEB8006808FD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04154492FB7DEB8006808FD /* WidgetKit.framework */; };
+		A041544C2FB7DEB8006808FD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A041544B2FB7DEB8006808FD /* SwiftUI.framework */; };
+		A04F6FDF2FB80C120085446E /* DepoCore in Frameworks */ = {isa = PBXBuildFile; productRef = A04F6FDE2FB80C120085446E /* DepoCore */; };
+		A0D4CABD2FBFEB830093A3BD /* DepoLiveActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A0D4CABC2FBFEB830093A3BD /* DepoLiveActivity */; };
+		A0D4CAC32FBFEFD10093A3BD /* DepoCore in Frameworks */ = {isa = PBXBuildFile; productRef = A0D4CAC22FBFEFD10093A3BD /* DepoCore */; };
+		A0D4CACB2FC6D9E40093A3BD /* DepoUI in Frameworks */ = {isa = PBXBuildFile; productRef = A0D4CACA2FC6D9E40093A3BD /* DepoUI */; };
+		A0D4CACD2FC6DBF00093A3BD /* DepoUI in Frameworks */ = {isa = PBXBuildFile; productRef = A0D4CACC2FC6DBF00093A3BD /* DepoUI */; };
 		A1000001 /* MenuBarTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000001 /* MenuBarTimerApp.swift */; };
 		A1000002 /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000002 /* TimerModel.swift */; };
 		A1000003 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000003 /* TimerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A0894ADF2FB6CCD6009C1645 /* DepoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepoCore.swift; sourceTree = "<group>"; };
-		A0894AE12FB6CEB2009C1645 /* DepoTimerAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepoTimerAttributes.swift; sourceTree = "<group>"; };
-		A0894AE22FB6CEBC009C1645 /* DepoLiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepoLiveActivityManager.swift; sourceTree = "<group>"; };
-		A0894AE32FB6CEC6009C1645 /* DepoIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepoIntents.swift; sourceTree = "<group>"; };
+		A04154472FB7DEB8006808FD /* DepoTimerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DepoTimerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A04154492FB7DEB8006808FD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		A041544B2FB7DEB8006808FD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		A04154662FB7DECC006808FD /* DepoTimerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DepoTimerWidgetExtension.entitlements; sourceTree = "<group>"; };
 		A0894AE52FB6CECD009C1645 /* DepoTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepoTimerApp.swift; sourceTree = "<group>"; };
 		A0894AE62FB6CEFE009C1645 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A0894AE72FB6F881009C1645 /* DepoTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DepoTimer.entitlements; sourceTree = "<group>"; };
@@ -30,18 +36,41 @@
 		A2000002 /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
 		A2000003 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		A2000004 /* MenuBarTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MenuBarTimer.entitlements; sourceTree = "<group>"; };
-		A3000001 /* MenuBarTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MenuBarTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3000001 /* DepoTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DepoTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A041545C2FB7DEBB006808FD /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A04154462FB7DEB8006808FD /* DepoTimerWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A041544D2FB7DEB8006808FD /* DepoTimerWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A041545C2FB7DEBB006808FD /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = DepoTimerWidget; sourceTree = "<group>"; };
 		A0894AF22FB6FC27009C1645 /* DepoTimer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DepoTimer; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A04154442FB7DEB8006808FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A041544C2FB7DEB8006808FD /* SwiftUI.framework in Frameworks */,
+				A0D4CABD2FBFEB830093A3BD /* DepoLiveActivity in Frameworks */,
+				A041544A2FB7DEB8006808FD /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0894AEE2FB6FC27009C1645 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0D4CACB2FC6D9E40093A3BD /* DepoUI in Frameworks */,
+				A0D4CAC32FBFEFD10093A3BD /* DepoCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,18 +78,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0D4CACD2FC6DBF00093A3BD /* DepoUI in Frameworks */,
+				A04F6FDF2FB80C120085446E /* DepoCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A04154482FB7DEB8006808FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A04154492FB7DEB8006808FD /* WidgetKit.framework */,
+				A041544B2FB7DEB8006808FD /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A0894ADE2FB6CCD6009C1645 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				A0894AE12FB6CEB2009C1645 /* DepoTimerAttributes.swift */,
-				A0894AE22FB6CEBC009C1645 /* DepoLiveActivityManager.swift */,
-				A0894AE32FB6CEC6009C1645 /* DepoIntents.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -89,8 +126,11 @@
 		A5000001 = {
 			isa = PBXGroup;
 			children = (
+				A04154662FB7DECC006808FD /* DepoTimerWidgetExtension.entitlements */,
 				A5000002 /* MenuBarTimer */,
 				A0894AF22FB6FC27009C1645 /* DepoTimer */,
+				A041544D2FB7DEB8006808FD /* DepoTimerWidget */,
+				A04154482FB7DEB8006808FD /* Frameworks */,
 				A5000003 /* Products */,
 				A0894ADE2FB6CCD6009C1645 /* Shared */,
 				A0894AE42FB6CECD009C1645 /* DepoTimer */,
@@ -105,7 +145,6 @@
 				A2000002 /* TimerModel.swift */,
 				A2000003 /* TimerView.swift */,
 				A2000004 /* MenuBarTimer.entitlements */,
-				A0894ADF2FB6CCD6009C1645 /* DepoCore.swift */,
 			);
 			path = MenuBarTimer;
 			sourceTree = "<group>";
@@ -113,8 +152,9 @@
 		A5000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A3000001 /* MenuBarTimer.app */,
+				A3000001 /* DepoTimer.app */,
 				A0894AF12FB6FC27009C1645 /* DepoTimer.app */,
+				A04154472FB7DEB8006808FD /* DepoTimerWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,6 +162,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A04154462FB7DEB8006808FD /* DepoTimerWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A041545D2FB7DEBB006808FD /* Build configuration list for PBXNativeTarget "DepoTimerWidgetExtension" */;
+			buildPhases = (
+				A04154432FB7DEB8006808FD /* Sources */,
+				A04154442FB7DEB8006808FD /* Frameworks */,
+				A04154452FB7DEB8006808FD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A041544D2FB7DEB8006808FD /* DepoTimerWidget */,
+			);
+			name = DepoTimerWidgetExtension;
+			packageProductDependencies = (
+				A0D4CABC2FBFEB830093A3BD /* DepoLiveActivity */,
+			);
+			productName = DepoTimerWidgetExtension;
+			productReference = A04154472FB7DEB8006808FD /* DepoTimerWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		A0894AF02FB6FC27009C1645 /* DepoTimer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0894AF92FB6FC29009C1645 /* Build configuration list for PBXNativeTarget "DepoTimer" */;
@@ -139,6 +202,8 @@
 			);
 			name = DepoTimer;
 			packageProductDependencies = (
+				A0D4CAC22FBFEFD10093A3BD /* DepoCore */,
+				A0D4CACA2FC6D9E40093A3BD /* DepoUI */,
 			);
 			productName = DepoTimer;
 			productReference = A0894AF12FB6FC27009C1645 /* DepoTimer.app */;
@@ -158,7 +223,7 @@
 			);
 			name = MenuBarTimer;
 			productName = MenuBarTimer;
-			productReference = A3000001 /* MenuBarTimer.app */;
+			productReference = A3000001 /* DepoTimer.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -171,6 +236,9 @@
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
+					A04154462FB7DEB8006808FD = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					A0894AF02FB6FC27009C1645 = {
 						CreatedOnToolsVersion = 26.5;
 					};
@@ -188,17 +256,28 @@
 				Base,
 			);
 			mainGroup = A5000001;
+			packageReferences = (
+				A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */,
+			);
 			productRefGroup = A5000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				A6000001 /* MenuBarTimer */,
 				A0894AF02FB6FC27009C1645 /* DepoTimer */,
+				A04154462FB7DEB8006808FD /* DepoTimerWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A04154452FB7DEB8006808FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0894AEF2FB6FC27009C1645 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -216,6 +295,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A04154432FB7DEB8006808FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0894AED2FB6FC27009C1645 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,7 +315,6 @@
 			files = (
 				A1000001 /* MenuBarTimerApp.swift in Sources */,
 				A1000002 /* TimerModel.swift in Sources */,
-				A0894AE02FB6CDDE009C1645 /* DepoCore.swift in Sources */,
 				A1000003 /* TimerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -237,6 +322,91 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A041545E2FB7DEBB006808FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DepoTimerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H58ZSKWPAZ;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DepoTimerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DepoTimerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.eurekastreet.DepoTimer.DepoTimerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A041545F2FB7DEBB006808FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DepoTimerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H58ZSKWPAZ;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DepoTimerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DepoTimerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = net.eurekastreet.DepoTimer.DepoTimerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		A0894AFA2FB6FC29009C1645 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -247,8 +417,10 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DepoTimer/DepoTimer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H58ZSKWPAZ;
 				ENABLE_PREVIEWS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -289,8 +461,10 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DepoTimer/DepoTimer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H58ZSKWPAZ;
 				ENABLE_PREVIEWS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -446,7 +620,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourname.MenuBarTimer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DepoTimer;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -470,7 +644,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourname.MenuBarTimer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DepoTimer;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -479,6 +653,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A041545D2FB7DEBB006808FD /* Build configuration list for PBXNativeTarget "DepoTimerWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A041545E2FB7DEBB006808FD /* Debug */,
+				A041545F2FB7DEBB006808FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A0894AF92FB6FC29009C1645 /* Build configuration list for PBXNativeTarget "DepoTimer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -507,6 +690,41 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/DepoKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A04F6FDE2FB80C120085446E /* DepoCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */;
+			productName = DepoCore;
+		};
+		A0D4CABC2FBFEB830093A3BD /* DepoLiveActivity */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */;
+			productName = DepoLiveActivity;
+		};
+		A0D4CAC22FBFEFD10093A3BD /* DepoCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */;
+			productName = DepoCore;
+		};
+		A0D4CACA2FC6D9E40093A3BD /* DepoUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */;
+			productName = DepoUI;
+		};
+		A0D4CACC2FC6DBF00093A3BD /* DepoUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A04F6FDD2FB7F3EA0085446E /* XCLocalSwiftPackageReference "Packages/DepoKit" */;
+			productName = DepoUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AA000001 /* Project object */;
 }

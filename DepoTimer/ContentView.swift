@@ -1,21 +1,11 @@
-//
-//  ContentView.swift
-//  DepoTimer
-//
-//  Created by Tim Statler on 5/15/26.
-//
-
 import SwiftUI
+import DepoUI
 
 struct ContentView: View {
+    @StateObject private var model = TimerModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        TimerView(model: model)
     }
 }
 

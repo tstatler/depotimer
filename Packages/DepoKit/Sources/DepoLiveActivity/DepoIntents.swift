@@ -1,6 +1,8 @@
+#if os(iOS)
 import Foundation
 import AppIntents
 import WidgetKit
+import DepoCore
 
 /// Toggles the depo timer. Backs the Control Center widget and any in-app intent buttons.
 public struct TogglePunchIntent: SetValueIntent, LiveActivityIntent {
@@ -18,9 +20,7 @@ public struct TogglePunchIntent: SetValueIntent, LiveActivityIntent {
         if value != wasRunning {
             DepoStorage.togglePunch()
         }
-        #if canImport(ActivityKit)
         await DepoLiveActivityManager.sync()
-        #endif
         ControlCenter.shared.reloadAllControls()
         return .result()
     }
@@ -36,10 +36,9 @@ public struct StopDepoIntent: LiveActivityIntent {
         if DepoStorage.isRunning {
             DepoStorage.togglePunch()
         }
-        #if canImport(ActivityKit)
         await DepoLiveActivityManager.sync()
-        #endif
         ControlCenter.shared.reloadAllControls()
         return .result()
     }
 }
+#endif

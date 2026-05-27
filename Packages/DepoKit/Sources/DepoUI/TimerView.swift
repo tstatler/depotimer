@@ -3,23 +3,36 @@ import DepoCore
 
 // MARK: - Color palette (matches HTML)
 private extension Color {
-    static let depoGreen    = Color(red: 0.114, green: 0.620, blue: 0.459)  // #1D9E75
-    static let depoRed      = Color(red: 0.847, green: 0.353, blue: 0.188)  // #D85A30
-    static let depoBlue     = Color(red: 0.094, green: 0.373, blue: 0.647)  // #185FA5
-    static let labelBg      = Color(NSColor.controlBackgroundColor)
-    static let cardBg       = Color(NSColor.windowBackgroundColor)
-    static let surfaceBg    = Color(red: 0.961, green: 0.961, blue: 0.949)  // #f5f5f3
-    static let mutedText    = Color(red: 0.533, green: 0.529, blue: 0.502)  // #888780
-    static let border       = Color.black.opacity(0.12)
+    static let depoGreen = Color(red: 0.114, green: 0.620, blue: 0.459)  // #1D9E75
+    static let depoRed   = Color(red: 0.847, green: 0.353, blue: 0.188)  // #D85A30
+    static let depoBlue  = Color(red: 0.094, green: 0.373, blue: 0.647)  // #185FA5
+    static let surfaceBg = Color(red: 0.961, green: 0.961, blue: 0.949)  // #f5f5f3
+    static let mutedText = Color(red: 0.533, green: 0.529, blue: 0.502)  // #888780
+    static let border    = Color.black.opacity(0.12)
+
+    static var cardBg: Color {
+        #if os(macOS)
+        Color(NSColor.windowBackgroundColor)
+        #else
+        Color(UIColor.systemBackground)
+        #endif
+    }
 }
 
 // MARK: - Root view
-struct TimerView: View {
+public struct TimerView: View {
     @ObservedObject var model: TimerModel
+    @State private var pendingExport: ExportAction?
+    @State private var csvShareURL: URL?
 
-    var body: some View {
+    private enum ExportAction { case copy, csv }
+
+    public init(model: TimerModel) {
+        self.model = model
+    }
+
+    public var body: some View {
         VStack(spacing: 0) {
-            // Total time card (visible once there are entries)
             if !model.entries.isEmpty {
                 TotalCard(model: model)
                     .padding(.horizontal, 14)
@@ -27,14 +40,14 @@ struct TimerView: View {
                     .padding(.bottom, 8)
             }
 
-            // Log card
-            LogCard(model: model)
+            LogCard(model: model,
+                    onCopy: { requestExport(.copy) },
+                    onCSV: { requestExport(.csv) })
                 .padding(.horizontal, 14)
                 .padding(.top, model.entries.isEmpty ? 14 : 0)
 
             Spacer(minLength: 0)
 
-            // Depo action button footer
             DepoButton(model: model)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
@@ -43,14 +56,78 @@ struct TimerView: View {
                         .shadow(color: .black.opacity(0.06), radius: 4, y: -2)
                 )
         }
+        #if os(macOS)
         .frame(width: 300)
+        #endif
         .background(Color.surfaceBg)
+        .confirmationDialog(
+            "Timer is still running",
+            isPresented: Binding(
+                get: { pendingExport != nil && model.isClockedIn },
+                set: { if !$0 { pendingExport = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Stop & Export") {
+                model.punch()
+                performPendingExport()
+            }
+            Button("Export As-Is") { performPendingExport() }
+            Button("Cancel", role: .cancel) { pendingExport = nil }
+        } message: {
+            Text("Stop the timer before exporting, or export the log as-is?")
+        }
+        #if os(iOS)
+        .sheet(item: $csvShareURL) { url in
+            ShareSheet(items: [url])
+        }
+        #endif
+    }
+
+    private func requestExport(_ action: ExportAction) {
+        if model.isClockedIn {
+            pendingExport = action
+        } else {
+            pendingExport = action
+            performPendingExport()
+        }
+    }
+
+    private func performPendingExport() {
+        guard let action = pendingExport else { return }
+        switch action {
+        case .copy:
+            model.copyToClipboard()
+        case .csv:
+            #if os(macOS)
+            model.saveCSVFile()
+            #elseif os(iOS)
+            csvShareURL = model.writeTempCSV()
+            #endif
+        }
+        pendingExport = nil
     }
 }
+
+// Make URL Identifiable for `.sheet(item:)`
+#if os(iOS)
+extension URL: @retroactive Identifiable {
+    public var id: String { absoluteString }
+}
+
+private struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+#endif
 
 // MARK: - Total time card
 struct TotalCard: View {
     @ObservedObject var model: TimerModel
+    @State private var pulseOpacity: Double = 1.0
 
     var body: some View {
         HStack {
@@ -83,18 +160,18 @@ struct TotalCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.border, lineWidth: 0.5))
     }
-
-    @State private var pulseOpacity: Double = 1.0
 }
 
 // MARK: - Log card
 struct LogCard: View {
     @ObservedObject var model: TimerModel
+    let onCopy: () -> Void
+    let onCSV: () -> Void
+
     @State private var copyConfirmed = false
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             HStack(spacing: 6) {
                 Text("Log")
                     .font(.system(size: 11, weight: .medium))
@@ -103,9 +180,8 @@ struct LogCard: View {
                     .tracking(0.5)
                 Spacer()
                 if !model.entries.isEmpty {
-                    // Copy button
                     Button(action: {
-                        guard model.copyToClipboard() else { return }
+                        onCopy()
                         copyConfirmed = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             copyConfirmed = false
@@ -122,8 +198,7 @@ struct LogCard: View {
                     .buttonStyle(.plain)
                     .animation(.easeInOut(duration: 0.15), value: copyConfirmed)
 
-                    // CSV download button
-                    Button(action: model.saveCSVFile) {
+                    Button(action: onCSV) {
                         HStack(spacing: 3) {
                             Image(systemName: "arrow.down.doc")
                                 .font(.system(size: 10, weight: .medium))
@@ -134,19 +209,16 @@ struct LogCard: View {
                     }
                     .buttonStyle(.plain)
 
-                    // Divider pip
                     Rectangle()
                         .fill(Color.border)
                         .frame(width: 0.5, height: 12)
 
-                    // Clear button
                     Button(action: model.clearAll) {
                         Image(systemName: "trash")
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(Color.mutedText.opacity(0.6))
                     }
                     .buttonStyle(.plain)
-                    .help("Clear all entries")
                 }
             }
             .padding(.horizontal, 12)
@@ -167,7 +239,6 @@ struct LogCard: View {
                         ForEach(Array(model.entries.enumerated()), id: \.element.id) { idx, entry in
                             EntryRow(entry: entry, model: model)
 
-                            // Duration badge between out→in pair
                             if entry.type == .out,
                                idx + 1 < model.entries.count,
                                model.entries[idx + 1].type == .in {
@@ -191,7 +262,9 @@ struct LogCard: View {
                         }
                     }
                 }
+                #if os(macOS)
                 .frame(maxHeight: 240)
+                #endif
             }
         }
         .background(Color.cardBg)
@@ -213,16 +286,15 @@ struct EntryRow: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
-                // Colored dot
                 Circle()
                     .fill(isIn ? Color.depoGreen : Color.depoRed)
                     .frame(width: 9, height: 9)
 
-                // Time display or edit field
                 if isEditing {
-                    TextField("HH:MM:SS", text: $editText, onCommit: commitEdit)
+                    TextField("HH:MM:SS", text: $editText)
                         .textFieldStyle(.plain)
                         .font(.system(size: 14, weight: .medium))
+                        .onSubmit(commitEdit)
                         .frame(width: 100)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -230,7 +302,6 @@ struct EntryRow: View {
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                         .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.border))
 
-                    // Confirm
                     Button(action: commitEdit) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 11, weight: .semibold))
@@ -238,7 +309,6 @@ struct EntryRow: View {
                     }
                     .buttonStyle(.plain)
 
-                    // Cancel
                     Button(action: { isEditing = false }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 11, weight: .semibold))
@@ -254,12 +324,10 @@ struct EntryRow: View {
                         .background(Color.clear)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                         .onTapGesture { startEdit() }
-                        .help("Click to edit time")
                 }
 
                 Spacer()
 
-                // In / Out badge
                 Text(isIn ? "In" : "Out")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(isIn ? Color(red: 0.059, green: 0.431, blue: 0.337) : Color(red: 0.6, green: 0.235, blue: 0.114))
@@ -286,8 +354,7 @@ struct EntryRow: View {
         let f = DateFormatter()
         f.dateFormat = "HH:mm:ss"
         if let parsed = f.date(from: editText) {
-            // Keep the same calendar date, just change the time
-            var cal = Calendar.current
+            let cal = Calendar.current
             let originalComponents = cal.dateComponents([.year, .month, .day], from: entry.time)
             let timeComponents = cal.dateComponents([.hour, .minute, .second], from: parsed)
             var merged = DateComponents()

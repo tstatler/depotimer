@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A6000001"
-               BuildableName = "MenuBarTimer.app"
+               BuildableName = "DepoTimer.app"
                BlueprintName = "MenuBarTimer"
                ReferencedContainer = "container:MenuBarTimer.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A6000001"
-            BuildableName = "MenuBarTimer.app"
+            BuildableName = "DepoTimer.app"
             BlueprintName = "MenuBarTimer"
             ReferencedContainer = "container:MenuBarTimer.xcodeproj">
          </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A6000001"
-            BuildableName = "MenuBarTimer.app"
+            BuildableName = "DepoTimer.app"
             BlueprintName = "MenuBarTimer"
             ReferencedContainer = "container:MenuBarTimer.xcodeproj">
          </BuildableReference>

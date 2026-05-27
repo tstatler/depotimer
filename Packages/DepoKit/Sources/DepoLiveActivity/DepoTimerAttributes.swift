@@ -1,6 +1,5 @@
+#if os(iOS)
 import Foundation
-
-#if canImport(ActivityKit)
 import ActivityKit
 
 /// Live Activity attributes shared between the iOS app and the widget extension.

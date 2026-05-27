@@ -1,6 +1,8 @@
 import ActivityKit
+import AppIntents
 import SwiftUI
 import WidgetKit
+import DepoLiveActivity
 
 struct DepoTimerLiveActivity: Widget {
     var body: some WidgetConfiguration {

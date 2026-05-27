@@ -1,10 +1,12 @@
 import AppIntents
 import SwiftUI
 import WidgetKit
+import DepoCore
+import DepoLiveActivity
 
 /// Single-tap Start/Stop toggle that lives in Control Center, the lock screen, or the Action Button.
 struct DepoControl: ControlWidget {
-    static let kind: String = "com.yourname.DepoTimer.DepoControl"
+    static let kind: String = "net.eurekastreet.DepoTimer.DepoControl"
 
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(

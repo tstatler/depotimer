@@ -1,7 +1,7 @@
+#if os(iOS)
 import Foundation
-
-#if canImport(ActivityKit)
 import ActivityKit
+import DepoCore
 
 /// Starts, updates, and ends the depo timer Live Activity based on shared-storage state.
 /// Callable from the iOS app target and the widget extension target.

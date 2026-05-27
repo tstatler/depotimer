@@ -1,4 +1,5 @@
 import SwiftUI
+import DepoUI
 
 @main
 struct MenuBarTimerApp: App {

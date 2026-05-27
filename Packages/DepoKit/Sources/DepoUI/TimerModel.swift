@@ -2,9 +2,11 @@ import Foundation
 import Combine
 import DepoCore
 
-#if canImport(AppKit)
+#if os(macOS)
 import AppKit
 import UniformTypeIdentifiers
+#elseif os(iOS)
+import UIKit
 #endif
 
 public final class TimerModel: ObservableObject {
@@ -31,17 +33,9 @@ public final class TimerModel: ObservableObject {
 
     // MARK: - Computed
 
-    public var isClockedIn: Bool {
-        entries.first?.type == .in
-    }
-
-    public var completedMs: TimeInterval {
-        DepoMath.completedSeconds(entries)
-    }
-
-    public var totalMs: TimeInterval {
-        DepoMath.totalSeconds(entries)
-    }
+    public var isClockedIn: Bool { entries.first?.type == .in }
+    public var completedMs: TimeInterval { DepoMath.completedSeconds(entries) }
+    public var totalMs: TimeInterval { DepoMath.totalSeconds(entries) }
 
     public func sessionDuration(outEntry: DepoEntry, inEntry: DepoEntry) -> String {
         DepoExport.sessionDuration(outEntry: outEntry, inEntry: inEntry)
@@ -110,9 +104,6 @@ public final class TimerModel: ObservableObject {
         DepoStorage.saveEntries(entries)
     }
 
-    /// Re-read from the shared store and update UI if the data changed.
-    /// Called both when iCloud notifies of an external change AND when the widget
-    /// changes state (e.g. user tapped Control Center toggle while the app was running).
     public func refreshFromSharedStore() {
         let loaded = DepoStorage.loadEntries()
         guard loaded != entries else { return }
@@ -131,29 +122,46 @@ public final class TimerModel: ObservableObject {
         }
     }
 
-    // MARK: - Export (UI-agnostic)
+    // MARK: - Export
 
     public func buildTextData() -> String { DepoExport.text(from: entries) }
     public func buildCSVData() -> String { DepoExport.csv(from: entries) }
 
-    // MARK: - Mac-specific export helpers
+    public func defaultCSVFilename() -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return "time-log-\(f.string(from: Date())).csv"
+    }
 
-    #if os(macOS)
+    /// Writes a temp CSV file and returns its URL. Used by the iOS share sheet.
+    public func writeTempCSV() -> URL? {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(defaultCSVFilename())
+        do {
+            try buildCSVData().write(to: url, atomically: true, encoding: .utf8)
+            return url
+        } catch {
+            return nil
+        }
+    }
+
     @discardableResult
     public func copyToClipboard() -> Bool {
-        guard confirmExportIfRunning() else { return false }
+        let text = buildTextData()
+        #if os(macOS)
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(buildTextData(), forType: .string)
+        NSPasteboard.general.setString(text, forType: .string)
+        #elseif os(iOS)
+        UIPasteboard.general.string = text
+        #endif
         return true
     }
 
+    #if os(macOS)
     public func saveCSVFile() {
-        guard confirmExportIfRunning() else { return }
         DispatchQueue.main.async {
             let panel = NSSavePanel()
-            let dateSuffix = DateFormatter()
-            dateSuffix.dateFormat = "yyyy-MM-dd"
-            panel.nameFieldStringValue = "time-log-\(dateSuffix.string(from: Date())).csv"
+            panel.nameFieldStringValue = self.defaultCSVFilename()
             panel.allowedContentTypes = [.commaSeparatedText]
             panel.isExtensionHidden = false
             panel.canCreateDirectories = true
@@ -161,21 +169,6 @@ public final class TimerModel: ObservableObject {
             let response = panel.runModal()
             guard response == .OK, let url = panel.url else { return }
             try? self.buildCSVData().write(to: url, atomically: true, encoding: .utf8)
-        }
-    }
-
-    private func confirmExportIfRunning() -> Bool {
-        guard isClockedIn else { return true }
-        let alert = NSAlert()
-        alert.messageText = "Timer is still running"
-        alert.informativeText = "Stop the timer before exporting, or export the log as-is?"
-        alert.addButton(withTitle: "Stop & Export")
-        alert.addButton(withTitle: "Export As-Is")
-        alert.addButton(withTitle: "Cancel")
-        switch alert.runModal() {
-        case .alertFirstButtonReturn: punch(); return true
-        case .alertSecondButtonReturn: return true
-        default: return false
         }
     }
     #endif

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="light">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <title>Depo Timer</title>
 <style>
   :root {
@@ -297,6 +298,27 @@
   .punch-btn.out { background: var(--punch-red); }
   .punch-btn:active { transform: scale(0.98); opacity: 0.85; }
 
+  /* Keyboard shortcut hint — only visible on devices likely to have a keyboard */
+  .kbd-hint {
+    display: none;
+    text-align: center;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .kbd-hint kbd {
+    font-family: inherit;
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    background: var(--card);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .kbd-hint { display: block; }
+  }
+
   /* Confirm modal */
   .modal-backdrop {
     position: fixed;
@@ -397,6 +419,7 @@
 
     <div class="footer">
       <button id="punch-btn" class="punch-btn in">Start / In</button>
+      <div class="kbd-hint">Press <kbd>Space</kbd> to start or stop</div>
     </div>
   </div>
 
@@ -785,6 +808,19 @@
   $("copy-btn").addEventListener("click", copyToClipboard);
   $("csv-btn").addEventListener("click", downloadCSV);
   $("clear-btn").addEventListener("click", clearAll);
+
+  // Spacebar shortcut: start/stop the timer.
+  // Skipped while editing an entry, while a modal is open, or while a focused
+  // button/input would handle the key itself.
+  document.addEventListener("keydown", (e) => {
+    if (e.code !== "Space" && e.key !== " ") return;
+    if (editingId !== null) return;
+    if (document.querySelector(".modal-backdrop")) return;
+    const ae = document.activeElement;
+    if (ae && (ae.tagName === "BUTTON" || ae.tagName === "INPUT" || ae.tagName === "TEXTAREA" || ae.isContentEditable)) return;
+    e.preventDefault();
+    punch();
+  });
 
   render();
 })();
