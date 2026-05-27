@@ -9,6 +9,12 @@ Available three ways:
 
 All three share the same UI conventions, the same export formats, and (for the macOS + iOS apps) the same log via App Groups + iCloud Key-Value Store, so a session you start on one device shows up on the other.
 
+## Screenshot
+
+<p align="center">
+  <img src="docs/screenshot.png" alt="Depo Timer macOS menu bar popover" width="320">
+</p>
+
 ## Why
 
 During depositions, attorneys often need to know exactly how long the witness has been on the record — both for billing and for procedural limits (e.g., the 7-hour federal cap under FRCP 30(d)(1)). Stopping/starting a stopwatch by hand and adding up segments is error-prone. This app does the math.
